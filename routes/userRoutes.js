@@ -51,7 +51,8 @@ router.get('/courses', async (req, res) => {
 router.post('/courses/:courseId', async (req, res) => {
 	try {
 		const { courseId } = req.params;
-		await purchaseCourse(courseId);
+		const userId = req.body.userId;
+		await purchaseCourse(userId, courseId);
 		res.json({ message: 'Course purchased successfully' });
 	} catch (error) {
 		res.status(500).json({ error: 'Failed to purchase course' });

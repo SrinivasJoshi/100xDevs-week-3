@@ -97,9 +97,9 @@ const updateCourse = async (
 };
 
 // Get all courses
-const getAllCourses = async () => {
+const getAllCourses = async (adminId) => {
 	try {
-		const courses = await Course.find({});
+		const courses = await Course.find({ createdBy: adminId });
 		return courses;
 	} catch (error) {
 		throw new Error('Failed to fetch courses');
