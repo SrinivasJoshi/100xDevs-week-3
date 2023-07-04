@@ -21,6 +21,11 @@ const courseSchema = new mongoose.Schema({
 		type: Boolean,
 		default: false,
 	},
+	createdBy: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'Admin',
+		required: true,
+	},
 });
 
 const Course = mongoose.model('Course', courseSchema);

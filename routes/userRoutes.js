@@ -1,12 +1,13 @@
-import { Router } from 'express';
-import {
+const Router = require('express').Router;
+const {
 	createUser,
 	loginUser,
 	getAllCourses,
 	purchaseCourse,
 	getPurchasedCourses,
-} from '../controllers/userController';
-import { authenticateUser } from '../middleware/authMiddleware';
+} = require('../controllers/userController');
+
+const { authenticateUser } = require('../middleware/authMiddleware');
 
 const router = Router();
 
@@ -14,9 +15,10 @@ const router = Router();
 router.post('/signup', async (req, res) => {
 	try {
 		const { username, password } = req.body;
-		const { message, token } = await createUser(username, password);
-		res.json({ message, token });
+		const { message, token, userId } = await createUser(username, password);
+		res.json({ message, token, userId });
 	} catch (error) {
+		console.log(error);
 		res.status(500).json({ error: 'Failed to create user account' });
 	}
 });
@@ -25,8 +27,8 @@ router.post('/signup', async (req, res) => {
 router.post('/login', async (req, res) => {
 	try {
 		const { username, password } = req.headers;
-		const { message, token } = await loginUser(username, password);
-		res.json({ message, token });
+		const { message, token, userId } = await loginUser(username, password);
+		res.json({ message, token, userId });
 	} catch (error) {
 		res.status(500).json({ error: 'Failed to authenticate user' });
 	}
@@ -59,11 +61,13 @@ router.post('/courses/:courseId', async (req, res) => {
 // GET /users/purchasedCourses
 router.get('/purchasedCourses', async (req, res) => {
 	try {
-		const purchasedCourses = await getPurchasedCourses();
+		const userId = req.body.userId;
+		const purchasedCourses = await getPurchasedCourses(userId);
 		res.json({ purchasedCourses });
 	} catch (error) {
+		console.log(error);
 		res.status(500).json({ error: 'Failed to fetch purchased courses' });
 	}
 });
 
-export default router;
+module.exports = router;

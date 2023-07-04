@@ -1,7 +1,7 @@
 const Admin = require('../models/adminModel');
 const Course = require('../models/courseModel');
 const jwt = require('jsonwebtoken');
-const { secretKey } = require('../config'); // Replace with your own secret key
+const secretKey = 'secret1232'; // Replace with your own secret key
 
 // Create a new admin account
 const createAdmin = async (username, password) => {
@@ -19,7 +19,7 @@ const createAdmin = async (username, password) => {
 		// Generate a JWT token
 		const token = generateToken(admin._id);
 
-		return { message: 'Admin created successfully', token };
+		return { message: 'Admin created successfully', token, adminId: admin._id };
 	} catch (error) {
 		throw new Error('Failed to create admin account');
 	}
@@ -37,7 +37,7 @@ const loginAdmin = async (username, password) => {
 		// Generate a JWT token
 		const token = generateToken(admin._id);
 
-		return { message: 'Logged in successfully', token };
+		return { message: 'Logged in successfully', token, adminId: admin._id };
 	} catch (error) {
 		throw new Error('Failed to authenticate admin');
 	}
@@ -49,7 +49,8 @@ const createCourse = async (
 	description,
 	price,
 	imageLink,
-	published
+	published,
+	adminId
 ) => {
 	try {
 		// Create a new course
@@ -59,11 +60,13 @@ const createCourse = async (
 			price,
 			imageLink,
 			published,
+			createdBy: adminId,
 		});
 		await course.save();
 
 		return { message: 'Course created successfully', courseId: course._id };
 	} catch (error) {
+		console.log(error);
 		throw new Error('Failed to create course');
 	}
 };

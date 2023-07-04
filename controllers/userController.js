@@ -19,8 +19,9 @@ const createUser = async (username, password) => {
 		// Generate a JWT token
 		const token = generateToken(user._id);
 
-		return { message: 'User created successfully', token };
+		return { message: 'User created successfully', token, userId: user._id };
 	} catch (error) {
+		console.log(error);
 		throw new Error('Failed to create user account');
 	}
 };
@@ -37,7 +38,7 @@ const loginUser = async (username, password) => {
 		// Generate a JWT token
 		const token = generateToken(user._id);
 
-		return { message: 'Logged in successfully', token };
+		return { message: 'Logged in successfully', token, userId: user._id };
 	} catch (error) {
 		throw new Error('Failed to authenticate user');
 	}
@@ -72,8 +73,12 @@ const getPurchasedCourses = async (userId) => {
 		// query the user's document and populate the purchased courses
 
 		const user = await User.findById(userId).populate('purchasedCourses');
+		if (!user) {
+			throw new Error('User not found');
+		}
 		return user.purchasedCourses;
 	} catch (error) {
+		console.log(error);
 		throw new Error('Failed to fetch purchased courses');
 	}
 };
